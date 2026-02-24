@@ -1,5 +1,11 @@
-import Image from "next/image";
+import { Header } from '../components/Header';
 
-export default function HomePage() {
-  return <h1>Ola</h1>  
+export default async function HomePage() {
+  console.log('HomePage');
+
+  return (
+    <div>
+      <Header />
+    </div>
+  );
 }
