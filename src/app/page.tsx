@@ -5,6 +5,7 @@ import { Container } from '../components/Container';
 import { Header } from '../components/Header';
 import Link from 'next/link';
 import Image from 'next/image';
+import { PostHeading } from '../components/PostHeading';
 
 export default async function HomePage() {
   return (
@@ -30,9 +31,9 @@ export default async function HomePage() {
             20/04/2025 10:00
           </time>
 
-          <h1 className='text-2xl/tight font-extrabold sm:text-4xl'>
-            <Link href='#'>Lorem ipsum dolor sit amet consectetur</Link>
-          </h1>
+          <PostHeading as='h1' url='#'>
+            Rerum, vel ex? Impedit ullam harum blanditiis
+          </PostHeading>
 
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. In velit
