@@ -1,5 +1,8 @@
 import { findPostBySlugCached } from '@/src/lib/post/queries';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
+import { SinglePost } from '@/src/components/SinglePost';
+import { SpinLoader } from '@/src/components/SpinLoader';
 
 type PostSlugPageProps = {
   params: Promise<{ slug: string }>;
@@ -19,11 +22,10 @@ export async function generateMetadata({
 
 export default async function PostSlugPage({ params }: PostSlugPageProps) {
   const { slug } = await params;
-  const post = await findPostBySlugCached(slug);
 
   return (
-    <div>
-      <p>{post.content}</p>
-    </div>
+    <Suspense fallback={<SpinLoader className='min-h-20 mb-16' />}>
+      <SinglePost slug={slug} />
+    </Suspense>
   );
 }
