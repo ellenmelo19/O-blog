@@ -6,6 +6,9 @@ import {
   findPostBySlugCached,
 } from '@/src/lib/post/queries';
 
+
+export const dynamic = 'force-static';
+
 type PostSlugPageProps = {
   params: Promise<{ slug: string }>;
 };
