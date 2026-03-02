@@ -1,7 +1,6 @@
 'use server';
 
-import { drizzleDb } from '@/src/db/drizzle';
-import { postsTable } from '@/src/db/drizzle/schemas';
+import { postRepository } from '@/src/repositories/post';
 import { makePartialPublicPost, PublicPost } from '@/src/dto/post/dto';
 import { PostCreateSchema } from '@/src/lib/post/validations';
 import { PostModel } from '@/src/models/post/post-model';
@@ -49,8 +48,21 @@ export async function createPostAction(
     slug: makeSlugFromText(validPostData.title),
   };
 
-  // TODO: mover este método para o repositório
-  await drizzleDb.insert(postsTable).values(newPost);
+  try {
+    await postRepository.create(newPost);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      return {
+        formState: newPost,
+        errors: [e.message],
+      };
+    }
+
+    return {
+      formState: newPost,
+      errors: ['Erro desconhecido'],
+    };
+  }
 
   revalidateTag('posts');
   redirect(`/admin/post/${newPost.id}`);
