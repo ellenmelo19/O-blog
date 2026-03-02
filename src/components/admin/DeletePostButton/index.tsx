@@ -1,6 +1,6 @@
 'use client';
 
-import { deletePostAction } from '@/src/actions/delete-post-action';
+import { deletePostAction } from '@/src/actions/post/delete-post-action';
 import { Dialog } from '@/src/components/Dialog';
 import clsx from 'clsx';
 import { Trash2Icon } from 'lucide-react';
