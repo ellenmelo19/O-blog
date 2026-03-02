@@ -8,19 +8,20 @@ import {
 import { PostUpdateSchema } from '@/src/lib/post/validations';
 import { postRepository } from '@/src/repositories/post';
 import { getZodErrorMessages } from '@/src/utils/get-zod-error-messages';
+import { makeRandomString } from '@/src/utils/make-random-string';
 import { revalidateTag } from 'next/cache';
 
 type UpdatePostActionState = {
   formState: PublicPost;
   errors: string[];
-  success?: true;
+  success?: string;
 };
 
 export async function updatePostAction(
   prevState: UpdatePostActionState,
   formData: FormData,
 ): Promise<UpdatePostActionState> {
-  // TODO: verificar se o usuário tá logado
+  // TODO: verificar se o u
 
   if (!(formData instanceof FormData)) {
     return {
@@ -77,6 +78,6 @@ export async function updatePostAction(
   return {
     formState: makePublicPostFromDb(post),
     errors: [],
-    success: true,
+    success: makeRandomString(),
   };
 }

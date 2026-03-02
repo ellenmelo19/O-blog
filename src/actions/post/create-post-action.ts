@@ -1,9 +1,9 @@
 'use server';
 
-import { postRepository } from '@/src/repositories/post';
 import { makePartialPublicPost, PublicPost } from '@/src/dto/post/dto';
 import { PostCreateSchema } from '@/src/lib/post/validations';
 import { PostModel } from '@/src/models/post/post-model';
+import { postRepository } from '@/src/repositories/post';
 import { getZodErrorMessages } from '@/src/utils/get-zod-error-messages';
 import { makeSlugFromText } from '@/src/utils/make-slug-from-text';
 import { revalidateTag } from 'next/cache';
@@ -13,7 +13,7 @@ import { v4 as uuidV4 } from 'uuid';
 type CreatePostActionState = {
   formState: PublicPost;
   errors: string[];
-  success?: true;
+  success?: string;
 };
 
 export async function createPostAction(
@@ -66,5 +66,5 @@ export async function createPostAction(
   }
 
   revalidateTag('posts');
-  redirect(`/admin/post/${newPost.id}`);
+  redirect(`/admin/post/${newPost.id}?created=1`);
 }
