@@ -5,6 +5,7 @@ import { InputCheckbox } from '@/src/components/InputCheckbox';
 import { InputText } from '@/src/components/InputText';
 import { MarkdownEditor } from '@/src/components/MarkdownEditor';
 import { useState } from 'react';
+import { ImageUploader } from '../ImageUploader';
 
 export function ManagePostForm() {
   const [contentValue, setContentValue] = useState('');
@@ -35,6 +36,8 @@ export function ManagePostForm() {
           value={contentValue}
           setValue={setContentValue}
         />
+
+        <ImageUploader />
 
         <InputText
           disabled
