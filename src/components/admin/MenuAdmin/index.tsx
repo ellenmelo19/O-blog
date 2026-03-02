@@ -20,9 +20,7 @@ export function MenuAdmin() {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+  // Removido useEffect para evitar renderizações em cascata
 
   const navClasses = clsx(
     'bg-slate-900 text-slate-100 rounded-lg',
