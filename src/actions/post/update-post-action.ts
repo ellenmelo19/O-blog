@@ -51,7 +51,7 @@ export async function updatePostAction(
   }
 
   if (!zodParsedObj.success) {
-    const errors = getZodErrorMessages(zodParsedObj.error.format());
+    const errors = getZodErrorMessages(zodParsedObj.error);
     return {
       errors,
       formState: makePartialPublicPost(formDataToObj),
@@ -80,8 +80,8 @@ export async function updatePostAction(
     };
   }
 
-  revalidateTag('posts');
-  revalidateTag(`post-${post.slug}`);
+  revalidateTag('posts', '/admin/post');
+  revalidateTag(`post-${post.slug}`, `/post/${post.slug}`);
 
   return {
     formState: makePublicPostFromDb(post),

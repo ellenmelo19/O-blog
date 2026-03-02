@@ -41,7 +41,7 @@ export async function createPostAction(
   }
 
   if (!zodParsedObj.success) {
-    const errors = getZodErrorMessages(zodParsedObj.error.format());
+    const errors = getZodErrorMessages(zodParsedObj.error);
     return {
       errors,
       formState: makePartialPublicPost(formDataToObj),
@@ -73,6 +73,6 @@ export async function createPostAction(
     };
   }
 
-  revalidateTag('posts');
+  revalidateTag('posts', '/admin/post');
   redirect(`/admin/post/${newPost.id}?created=1`);
 }
