@@ -1,10 +1,17 @@
 'use server';
 
+import { verifyLoginSession } from '@/src/lib/login/manage-login';
 import { postRepository } from '@/src/repositories/post';
 import { revalidateTag } from 'next/cache';
 
 export async function deletePostAction(id: string) {
-  // TODO: checar login do usuário
+  const isAuthenticated = await verifyLoginSession();
+
+  if (!isAuthenticated) {
+    return {
+      error: 'Faça login novamente em outra aba',
+    };
+  }
 
   if (!id || typeof id !== 'string') {
     return {
@@ -27,8 +34,8 @@ export async function deletePostAction(id: string) {
     };
   }
 
-  revalidateTag('posts', '/admin/post');
-  revalidateTag(`post-${post.slug}`, `/post/${post.slug}`);
+  revalidateTag('posts');
+  revalidateTag(`post-${post.slug}`);
 
   return {
     error: '',
