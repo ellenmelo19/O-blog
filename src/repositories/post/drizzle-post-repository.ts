@@ -3,7 +3,7 @@ import { PostRepository } from './post-repository';
 import { drizzleDb } from '@/src/db/drizzle';
 import { asyncDelay } from '@/src/utils/async-delay';
 import { postsTable } from '@/src/db/drizzle/schemas';
-import { eq } from 'drizzle-orm';
+import { eq, and, or } from 'drizzle-orm';
 
 const simulateWaitMs = Number(process.env.SIMULATE_WAIT_IN_MS) || 0;
 
@@ -55,18 +55,45 @@ export class DrizzlePostRepository implements PostRepository {
   }
 
   async create(post: PostModel): Promise<PostModel> {
+    console.log('=== REPOSITORY CREATE ===');
+    console.log('Verificando se post já existe...');
+    
     const postExists = await drizzleDb.query.posts.findFirst({
       where: (posts, { or, eq }) =>
         or(eq(posts.id, post.id), eq(posts.slug, post.slug)),
-      columns: { id: true },
+      columns: { id: true, slug: true },
     });
 
+    console.log('Post exists check result:', postExists);
+
     if (!!postExists) {
-      throw new Error('Post com ID ou Slug já existe na base de dados');
+      console.log('Post já existe!');
+      throw new Error(`Post com ID ou Slug já existe na base de dados. ID: ${post.id}, Slug: ${post.slug}`);
     }
 
-    await drizzleDb.insert(postsTable).values(post);
-    return post;
+    console.log('Tentando inserir no banco...');
+    console.log('Dados do post:', post);
+    
+    try {
+      const result = await drizzleDb.insert(postsTable).values(post);
+      console.log('Resultado da inserção:', result);
+      
+      // Verificar se foi inserido
+      const insertedPost = await drizzleDb.query.posts.findFirst({
+        where: (posts, { eq }) => eq(posts.id, post.id),
+      });
+      
+      console.log('Post inserido (verificação):', insertedPost);
+      
+      if (!insertedPost) {
+        throw new Error('Post não foi inserido (verificação falhou)');
+      }
+      
+      return post;
+    } catch (dbError) {
+      console.log('Erro no banco de dados:', dbError);
+      throw dbError;
+    }
   }
 
   async delete(id: string): Promise<PostModel> {
@@ -95,7 +122,6 @@ export class DrizzlePostRepository implements PostRepository {
       throw new Error('Post não existe');
     }
 
-    // Verificar se o novo slug já existe em outro post
     if (newPostData.slug && newPostData.slug !== oldPost.slug) {
       const existingPostWithSlug = await drizzleDb.query.posts.findFirst({
         where: (posts, { eq, and }) => 

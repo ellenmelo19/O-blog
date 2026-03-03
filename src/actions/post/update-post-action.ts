@@ -12,7 +12,6 @@ import { getZodErrorMessages } from '@/src/utils/get-zod-error-messages';
 import { makeRandomString } from '@/src/utils/make-random-string';
 import { makeSlugFromText } from '@/src/utils/make-slug-from-text';
 import { revalidateTag } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 type UpdatePostActionState = {
   formState: PublicPost;
@@ -89,6 +88,7 @@ export async function updatePostAction(
   try {
     const post = await postRepository.update(id, newPost);
     
+    // Corrigido: revalidateTag sem o segundo argumento
     revalidateTag('posts');
     revalidateTag(`post-${post.slug}`);
     
