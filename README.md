@@ -38,7 +38,7 @@ Um blog simples construído com Next.js 15, TypeScript, Drizzle ORM e SQLite. In
 
 1. **Clone o repositório**
 ```bash
-git clone https://github.com/seu-usuario/seu-blog.git
+git clone https://github.com/ellenmelo19/O-blog.git
 cd seu-blog
 npm install
 
