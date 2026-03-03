@@ -27,23 +27,20 @@ const PostBaseSchema = z.object({
     message: 'URL da capa deve ser uma URL ou caminho para imagem',
   }),
   published: z
-    .union([
-      z.literal('on'),
-      z.literal('true'),
-      z.literal('false'),
-      z.literal(true),
-      z.literal(false),
-      z.literal(null),
-      z.literal(undefined),
-    ])
-    .default(false)
-    .transform(val => val === 'on' || val === 'true' || val === true),
+    .preprocess(
+      (val) => {
+        // Se o valor não existe no FormData, é false
+        if (val === undefined || val === null) return false;
+        // Se veio do FormData como string, converte
+        if (val === 'on') return true;
+        if (val === 'true') return true;
+        if (val === 'false') return false;
+        return Boolean(val);
+      },
+      z.boolean()
+    )
+    .default(false),
 });
 
-// PostCreateSchema: igual ao base por enquanto
 export const PostCreateSchema = PostBaseSchema;
-
-// PostUpdateSchema: pode incluir campos extras no futuro (ex: id)
-export const PostUpdateSchema = PostBaseSchema.extend({
-  // id: z.string().uuid('ID inválido'),
-});
+export const PostUpdateSchema = PostBaseSchema;
