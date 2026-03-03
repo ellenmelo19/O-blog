@@ -49,12 +49,15 @@ export async function createPostAction(
   }
 
   const validPostData = zodParsedObj.data;
+  const now = new Date().toISOString();
+  const slug = makeSlugFromText(validPostData.title);
+  
   const newPost: PostModel = {
     ...validPostData,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: now,
+    updatedAt: now,
     id: uuidV4(),
-    slug: makeSlugFromText(validPostData.title),
+    slug,
   };
 
   try {
@@ -73,6 +76,6 @@ export async function createPostAction(
     };
   }
 
-  revalidateTag('posts', '/admin/post');
+  revalidateTag('posts');
   redirect(`/admin/post/${newPost.id}?created=1`);
 }

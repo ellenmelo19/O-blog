@@ -85,7 +85,7 @@ export class DrizzlePostRepository implements PostRepository {
 
   async update(
     id: string,
-    newPostData: Omit<PostModel, 'id' | 'slug' | 'createdAt' | 'updatedAt'>,
+    newPostData: Partial<Omit<PostModel, 'id' | 'createdAt'>>,
   ): Promise<PostModel> {
     const oldPost = await drizzleDb.query.posts.findFirst({
       where: (posts, { eq }) => eq(posts.id, id),
@@ -95,16 +95,29 @@ export class DrizzlePostRepository implements PostRepository {
       throw new Error('Post não existe');
     }
 
-    const updatedAt = new Date().toISOString();
+    // Verificar se o novo slug já existe em outro post
+    if (newPostData.slug && newPostData.slug !== oldPost.slug) {
+      const existingPostWithSlug = await drizzleDb.query.posts.findFirst({
+        where: (posts, { eq, and }) => 
+          and(eq(posts.slug, newPostData.slug), eq(posts.id, id)),
+      });
+      
+      if (existingPostWithSlug) {
+        throw new Error('Já existe outro post com este slug');
+      }
+    }
+
     const postData = {
-      author: newPostData.author,
-      content: newPostData.content,
-      coverImageUrl: newPostData.coverImageUrl,
-      excerpt: newPostData.excerpt,
-      published: newPostData.published,
-      title: newPostData.title,
-      updatedAt,
+      author: newPostData.author ?? oldPost.author,
+      content: newPostData.content ?? oldPost.content,
+      coverImageUrl: newPostData.coverImageUrl ?? oldPost.coverImageUrl,
+      excerpt: newPostData.excerpt ?? oldPost.excerpt,
+      published: newPostData.published ?? oldPost.published,
+      title: newPostData.title ?? oldPost.title,
+      slug: newPostData.slug ?? oldPost.slug,
+      updatedAt: newPostData.updatedAt ?? new Date().toISOString(),
     };
+
     await drizzleDb
       .update(postsTable)
       .set(postData)

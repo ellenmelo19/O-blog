@@ -10,7 +10,9 @@ import { PostUpdateSchema } from '@/src/lib/post/validations';
 import { postRepository } from '@/src/repositories/post';
 import { getZodErrorMessages } from '@/src/utils/get-zod-error-messages';
 import { makeRandomString } from '@/src/utils/make-random-string';
+import { makeSlugFromText } from '@/src/utils/make-slug-from-text';
 import { revalidateTag } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 type UpdatePostActionState = {
   formState: PublicPost;
@@ -59,13 +61,42 @@ export async function updatePostAction(
   }
 
   const validPostData = zodParsedObj.data;
+  
+  // Buscar o post atual para pegar o título antigo
+  let oldPost;
+  try {
+    oldPost = await postRepository.findById(id);
+  } catch (e) {
+    return {
+      formState: makePartialPublicPost(formDataToObj),
+      errors: ['Post não encontrado'],
+    };
+  }
+  
+  // Gerar novo slug apenas se o título mudou
+  const slug = validPostData.title !== oldPost.title 
+    ? makeSlugFromText(validPostData.title)
+    : oldPost.slug;
+
+  const updatedAt = new Date().toISOString();
+  
   const newPost = {
     ...validPostData,
+    slug,
+    updatedAt,
   };
 
-  let post;
   try {
-    post = await postRepository.update(id, newPost);
+    const post = await postRepository.update(id, newPost);
+    
+    revalidateTag('posts');
+    revalidateTag(`post-${post.slug}`);
+    
+    return {
+      formState: makePublicPostFromDb(post),
+      errors: [],
+      success: makeRandomString(),
+    };
   } catch (e: unknown) {
     if (e instanceof Error) {
       return {
@@ -79,13 +110,4 @@ export async function updatePostAction(
       errors: ['Erro desconhecido'],
     };
   }
-
-  revalidateTag('posts', '/admin/post');
-  revalidateTag(`post-${post.slug}`, `/post/${post.slug}`);
-
-  return {
-    formState: makePublicPostFromDb(post),
-    errors: [],
-    success: makeRandomString(),
-  };
 }
