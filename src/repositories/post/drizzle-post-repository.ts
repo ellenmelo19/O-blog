@@ -3,7 +3,7 @@ import { PostRepository } from './post-repository';
 import { drizzleDb } from '@/src/db/drizzle';
 import { asyncDelay } from '@/src/utils/async-delay';
 import { postsTable } from '@/src/db/drizzle/schemas';
-import { eq, and, or } from 'drizzle-orm';
+import { eq, and, or, ne } from 'drizzle-orm';
 
 const simulateWaitMs = Number(process.env.SIMULATE_WAIT_IN_MS) || 0;
 
@@ -122,10 +122,14 @@ export class DrizzlePostRepository implements PostRepository {
       throw new Error('Post não existe');
     }
 
+    // Verificar se o novo slug já existe em outro post (apenas se foi fornecido e é diferente do antigo)
     if (newPostData.slug && newPostData.slug !== oldPost.slug) {
       const existingPostWithSlug = await drizzleDb.query.posts.findFirst({
         where: (posts, { eq, and }) => 
-          and(eq(posts.slug, newPostData.slug), eq(posts.id, id)),
+          and(
+            eq(posts.slug, newPostData.slug as string), // Garantir que é string
+            ne(posts.id, id) // Não considerar o próprio post
+          ),
       });
       
       if (existingPostWithSlug) {

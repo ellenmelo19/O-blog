@@ -99,8 +99,8 @@ export async function createPostAction(
   }
 
   console.log('Fazendo revalidateTag...');
-  revalidateTag('posts');
-  revalidateTag(`post-${newPost.slug}`);
+  revalidateTag('posts', 'default');
+  revalidateTag(`post-${newPost.slug}`, 'default');
   
   console.log('Redirecionando para:', `/admin/post/${newPost.id}?created=1`);
   redirect(`/admin/post/${newPost.id}?created=1`);

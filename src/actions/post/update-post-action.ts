@@ -65,7 +65,7 @@ export async function updatePostAction(
   let oldPost;
   try {
     oldPost = await postRepository.findById(id);
-  } catch (e) {
+  } catch  {
     return {
       formState: makePartialPublicPost(formDataToObj),
       errors: ['Post não encontrado'],
@@ -89,8 +89,8 @@ export async function updatePostAction(
     const post = await postRepository.update(id, newPost);
     
     // Corrigido: revalidateTag sem o segundo argumento
-    revalidateTag('posts');
-    revalidateTag(`post-${post.slug}`);
+    revalidateTag('posts', 'default');
+    revalidateTag(`post-${post.slug}`, 'default');
     
     return {
       formState: makePublicPostFromDb(post),
