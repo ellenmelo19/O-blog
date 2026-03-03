@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📝 Blog com Next.js 15
 
-## Getting Started
+Um blog simples construído com Next.js 15, TypeScript, Drizzle ORM e SQLite. Inclui sistema de autenticação, painel administrativo completo e gerenciamento de posts.
 
-First, run the development server:
+## 🚀 Tecnologias
 
+- **Next.js 15** - Framework React com Server Components
+- **TypeScript** - Tipagem estática
+- **Drizzle ORM** - ORM moderno e type-safe
+- **SQLite** - Banco de dados leve e eficiente
+- **Zod** - Validação de dados
+- **TailwindCSS** - Estilização
+- **Better-SQLite3** - Driver SQLite
+
+## ✨ Funcionalidades
+
+- ✅ Listagem pública de posts com paginação
+- ✅ Visualização individual de posts
+- ✅ Painel administrativo protegido
+- ✅ Autenticação de usuário
+- ✅ CRUD completo de posts:
+  - Criar novos posts com título, conteúdo, autor e imagem de capa
+  - Editar posts existentes
+  - Deletar posts
+  - Publicar/Despublicar posts
+- ✅ Geração automática de slugs a partir do título
+- ✅ Validação de dados com Zod
+- ✅ Sanitização de HTML no conteúdo
+- ✅ Cache otimizado com Next.js 15
+- ✅ URLs amigáveis para SEO
+
+## 📋 Pré-requisitos
+
+- Node.js 18.17.0 ou superior
+- npm ou yarn
+
+## 🔧 Instalação
+
+1. **Clone o repositório**
 ```bash
+git clone https://github.com/seu-usuario/seu-blog.git
+cd seu-blog
+npm install
+
+## configure as variasveis de ambiente em .env.local
+
+# Crie o banco SQLite
+touch db.sqlite3
+
+# Execute as migrações
+npm run db:push
+
+# Popule com dados iniciais (opcional)
+npm run db:seed
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+<img width="1222" height="932" alt="Captura de tela de 2026-03-03 15-27-38" src="https://github.com/user-attachments/assets/5d2378f9-b813-4941-abd8-68e348d7da0d" />
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 🔐 Autenticação
 
-## Learn More
+O sistema usa um mecanismo simples de autenticação baseado em sessão. Para acessar o painel admin:
 
-To learn more about Next.js, take a look at the following resources:
+Acesse /admin/login
+Use as credenciais configuradas 
+A sessão é mantida via cookies seguros
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<img width="1260" height="748" alt="Captura de tela de 2026-03-03 15-27-51" src="https://github.com/user-attachments/assets/a70256d8-542b-43c5-a51b-8698777206a2" />
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# 📝 Uso do Painel Admin
+ - Criar um Post
+ 
+Acesse /admin/post/new
+* Preencha os campos:
+  
+-Título (mín. 3, máx. 120 caracteres)
 
-## Deploy on Vercel
+-Conteúdo (HTML suportado)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+-Autor (mín. 4, máx. 100 caracteres)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+-Excerto (resumo do post)
+
+-URL da Imagem de Capa
+
+-Publicado (checkbox para publicar imediatamente)
+
+Clique em "Salvar"
+
+* Editar um Post
+  
+-Acesse /admin/post para ver todos os posts
+
+-Clique em "Editar" no post desejado
+
+-Modifique os campos necessários
+
+O slug é atualizado automaticamente se o título mudar
+
+* Deletar um Post
+  
+-Na lista de posts, clique em "Deletar"
+
+-Confirme a ação
+
+<img width="1260" height="748" alt="image" src="https://github.com/user-attachments/assets/21450fa4-c3d5-4d68-8ed8-b53cb1db9c94" />
